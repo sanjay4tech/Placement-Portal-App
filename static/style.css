@@ -1,0 +1,165 @@
+/* -------------------------------------------------
+   Placement Portal Theme
+   Coral:      #FCA47C
+   Aqua:       #23CED9
+   SoftYellow: #F9D779
+   SageGreen:  #A1CCA6
+   DeepTeal:   #097C87
+   ------------------------------------------------- */
+
+:root {
+    --color-coral: #FCA47C;
+    --color-aqua: #23CED9;
+    --color-soft-yellow: #F9D779;
+    --color-sage: #A1CCA6;
+    --color-deep-teal: #097C87;
+
+    --neutral-bg: #f5f5f5;
+    --neutral-card: #ffffff;
+    --neutral-border: #e0e0e0;
+    --neutral-text: #222222;
+}
+
+/* 60% neutral background */
+.theme-body {
+    background-color: var(--neutral-bg);
+    color: var(--neutral-text);
+    min-height: 100vh;
+}
+
+/* Navbar / header / footer use Deep Teal */
+.theme-header {
+    background-color: var(--color-deep-teal);
+}
+
+.theme-footer {
+    background-color: var(--color-deep-teal);
+    color: #ffffff;
+}
+
+/* Sidebar: Sage Green structural area */
+.theme-sidebar {
+    background-color: var(--color-sage);
+    min-height: calc(100vh - 56px); /* subtract navbar height */
+    color: #0f2a1f;
+}
+
+.theme-sidebar-link {
+    display: block;
+    padding: 0.45rem 0.75rem;
+    margin-bottom: 0.25rem;
+    border-radius: 0.35rem;
+    color: #0f2a1f;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.theme-sidebar-link:hover,
+.theme-sidebar-link.active {
+    background-color: rgba(9, 124, 135, 0.18); /* teal tint */
+    color: #063a40;
+}
+
+/* Cards & panels: neutral + Soft Yellow tint */
+.theme-card {
+    border-radius: 0.6rem;
+    border: 1px solid var(--neutral-border);
+    background: linear-gradient(
+        135deg,
+        var(--neutral-card) 0%,
+        var(--neutral-card) 60%,
+        rgba(249, 215, 121, 0.25) 100%
+    );
+}
+
+.theme-panel {
+    padding: 1rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(9, 124, 135, 0.35);
+    background-color: rgba(249, 215, 121, 0.25);
+}
+
+/* Badges: Coral by default */
+.theme-badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background-color: var(--color-coral);
+    color: #212121;
+    font-size: 0.75rem;
+}
+
+/* Links: Aqua */
+.theme-link {
+    color: var(--color-aqua);
+    text-decoration: none;
+}
+
+.theme-link:hover {
+    color: #15959e;
+    text-decoration: underline;
+}
+
+/* Forms: Aqua focus ring */
+.form-control:focus {
+    border-color: var(--color-aqua);
+    box-shadow: 0 0 0 0.12rem rgba(35, 206, 217, 0.35);
+}
+
+/* Tables: subtle teal header */
+.table thead th {
+    border-bottom-width: 1px;
+    background-color: rgba(9, 124, 135, 0.05);
+}
+
+/* Alerts with color accents (Soft Yellow for warnings, Coral for errors, etc.) */
+.alert-success {
+    border-left: 4px solid var(--color-sage);
+}
+.alert-danger {
+    border-left: 4px solid var(--color-coral);
+}
+.alert-warning {
+    border-left: 4px solid var(--color-soft-yellow);
+}
+.alert-info {
+    border-left: 4px solid var(--color-aqua);
+}
+
+/* Section separators using Coral */
+hr {
+    border-top: 1px dashed rgba(252, 164, 124, 0.8);
+}
+
+/* Make footer stick visually to bottom for short pages */
+html, body {
+    height: 100%;
+}
+
+body.theme-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.main-wrapper {
+    flex: 1 0 auto;
+}
+
+.theme-footer {
+    flex-shrink: 0;
+}
+
+/* Responsive tweaks */
+@media (max-width: 767.98px) {
+    .theme-sidebar {
+        min-height: auto;
+    }
+}
+.action-btn-nowrap {
+    white-space: nowrap;
+}
+
+.table td form.m-0 {
+    margin-bottom: 0 !important;
+    flex: 0 0 auto;
+}

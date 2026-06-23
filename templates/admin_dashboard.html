@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Admin Dashboard - Placement Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="theme-body">
+
+<nav class="navbar navbar-expand-lg theme-header navbar-dark mb-0">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+            Placement Portal
+        </a>
+        <div class="d-flex align-items-center">
+            <span class="me-3 small text-light">Admin Panel</span>
+            <a class="btn btn-outline-light btn-sm"
+               href="{{ url_for('sign_out') }}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-wrapper">
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <!-- Sidebar -->
+            <aside class="col-auto col-md-2 theme-sidebar p-3">
+                <h6 class="text-white mb-3">Navigation</h6>
+                <a class="theme-sidebar-link active"
+                   href="{{ url_for('admin_home') }}">Dashboard</a>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('manage_companies') }}">Companies</a>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('manage_students') }}">Students</a>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('manage_drives') }}">Drives</a>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('view_applications') }}">Applications</a>
+            </aside>
+
+            <!-- Main content -->
+            <main class="col py-4 px-4">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} mb-3">
+                        {{ message }}
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <h3 class="mb-4">Admin Overview</h3>
+
+                <!-- Stats row -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="theme-panel text-center">
+                            <div class="fw-bold">Students</div>
+                            <div class="display-6">{{ total_students }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="theme-panel text-center">
+                            <div class="fw-bold">Companies</div>
+                            <div class="display-6">{{ total_companies }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="theme-panel text-center">
+                            <div class="fw-bold">Drives</div>
+                            <div class="display-6">{{ total_drives }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="theme-panel text-center">
+                            <div class="fw-bold">Applications</div>
+                            <div class="display-6">{{ total_applications }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Pending companies -->
+                    <div class="col-md-6">
+                        <div class="card theme-card">
+                            <div class="card-header bg-transparent border-0">
+                                <span class="fw-semibold">Pending Companies</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-sm mb-0 align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Requested On</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for c in pending_companies %}
+                                            <tr>
+                                                <td>{{ c.company_name }}</td>
+                                                <td>{{ c.contact_email }}</td>
+                                                <td>{{ c.created_at.date() }}</td>
+                                            </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted">
+                                                    No pending companies.
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending drives -->
+                    <div class="col-md-6">
+                        <div class="card theme-card">
+                            <div class="card-header bg-transparent border-0">
+                                <span class="fw-semibold">Pending Drives</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-sm mb-0 align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Drive</th>
+                                                <th>Company</th>
+                                                <th>Deadline</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for d in pending_drives %}
+                                            <tr>
+                                                <td>{{ d.drive_title }}</td>
+                                                <td>{{ d.company.company_name }}</td>
+                                                <td>{{ d.application_deadline }}</td>
+                                            </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted">
+                                                    No pending drives.
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</div>
+
+<footer class="theme-footer text-center py-2">
+    <small>&copy; {{ 2026 }} Placement Portal.</small>
+</footer>
+
+</body>
+</html>

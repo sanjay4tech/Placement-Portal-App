@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Drive Details - Company</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="theme-body">
+
+<nav class="navbar navbar-expand-lg theme-header navbar-dark mb-0">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+            Placement Portal
+        </a>
+        <div class="d-flex align-items-center">
+            <span class="me-3 small text-light">
+                Company: {{ company.company_name }}
+            </span>
+            <a class="btn btn-outline-light btn-sm"
+               href="{{ url_for('sign_out') }}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-wrapper">
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <!-- Sidebar -->
+            <aside class="col-auto col-md-2 theme-sidebar p-3">
+                <h6 class="text-white mb-3">Company Panel</h6>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('company_home') }}">Dashboard</a>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('create_drive') }}">Create Drive</a>
+            </aside>
+
+            <!-- Main content -->
+            <main class="col py-4 px-4">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} mb-3">
+                        {{ message }}
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="mb-0">{{ drive.drive_title }}</h3>
+                    <a href="{{ url_for('edit_drive', drive_id=drive.id) }}"
+                       class="btn btn-warning btn-sm">Edit / Close</a>
+                </div>
+
+                <!-- Drive info -->
+                <div class="card theme-card mb-4">
+                    <div class="card-body">
+                        <p class="mb-1"><strong>Role:</strong> {{ drive.job_role }}</p>
+                        <p class="mb-1"><strong>Location:</strong> {{ drive.job_location or 'Not specified' }}</p>
+                        <p class="mb-1"><strong>Salary:</strong> {{ drive.salary_package or 'Not specified' }}</p>
+                        <p class="mb-1"><strong>Eligibility:</strong> {{ drive.eligibility_criteria or 'Not specified' }}</p>
+                        <p class="mb-1"><strong>Deadline:</strong> {{ drive.application_deadline }}</p>
+                        <p class="mb-1">
+                            <strong>Status:</strong>
+                            <span class="theme-badge">
+                                {{ drive.drive_status|capitalize }}
+                            </span>
+                        </p>
+                        <hr>
+                        <p class="mb-0"><strong>Description:</strong></p>
+                        <p>{{ drive.job_description }}</p>
+                    </div>
+                </div>
+
+                <!-- Applications table -->
+                <h5 class="mb-2">Student Applications</h5>
+
+                <div class="card theme-card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Email</th>
+                                        <th>Dept</th>
+                                        <th>CGPA</th>
+                                        <th>Status</th>
+                                        <th>Applied On</th>
+                                        <th style="width: 300px;">Review</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for app, student in applications %}
+                                    <tr>
+                                        <td>{{ student.full_name }}</td>
+                                        <td>{{ student.email }}</td>
+                                        <td>{{ student.department or '-' }}</td>
+                                        <td>{{ '%.2f'|format(student.cgpa) if student.cgpa is not none else '-' }}</td>
+                                        <td>{{ app.current_status }}</td>
+                                        <td>{{ app.applied_on.strftime("%Y-%m-%d %H:%M") }}</td>
+                                        <td>
+                                            <form method="post"
+                                                  action="{{ url_for('review_application',
+                                                                     application_id=app.id) }}"
+                                                  class="row g-1 align-items-center">
+                                                <div class="col-4">
+                                                    <select name="status" class="form-select form-select-sm">
+                                                        {% for s in ['Applied','Shortlisted','Interview','Selected','Rejected','Placed'] %}
+                                                        <option value="{{ s }}"
+                                                                {% if app.current_status == s %}selected{% endif %}>
+                                                            {{ s }}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="col-5">
+                                                    <input type="text" name="remark"
+                                                           class="form-control form-control-sm"
+                                                           placeholder="Remark"
+                                                           value="{{ app.recruiter_remark or '' }}">
+                                                </div>
+                                                <div class="col-3">
+                                                    <button class="btn btn-primary btn-sm w-100 action-btn-nowrap" type="submit">
+                                                        Update
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">
+                                            No applications yet.
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</div>
+
+<footer class="theme-footer text-center py-2">
+    <small>&copy; {{ 2026 }} Placement Portal.</small>
+</footer>
+
+</body>
+</html>

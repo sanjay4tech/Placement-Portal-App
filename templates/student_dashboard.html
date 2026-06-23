@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Student Dashboard - Placement Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="theme-body">
+
+<nav class="navbar navbar-expand-lg theme-header navbar-dark mb-0">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+            Placement Portal
+        </a>
+        <div class="d-flex align-items-center">
+            <span class="me-3 small text-light">
+                Student: {{ student.full_name }}
+            </span>
+            <a class="btn btn-outline-light btn-sm"
+               href="{{ url_for('sign_out') }}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-wrapper">
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <!-- Sidebar -->
+            <aside class="col-auto col-md-2 theme-sidebar p-3">
+                <h6 class="text-white mb-3">Student Panel</h6>
+                <a class="theme-sidebar-link active"
+                   href="{{ url_for('student_home') }}">Dashboard</a>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('profile') }}">Profile</a>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('application_history') }}">History</a>
+            </aside>
+
+            <!-- Main content -->
+            <main class="col py-4 px-4">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} mb-3">
+                        {{ message }}
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <h3 class="mb-3">Welcome, {{ student.full_name }}</h3>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="theme-panel text-center">
+                            <div class="fw-semibold">Applied Drives</div>
+                            <div class="display-6">
+                                {{ applied_drive_ids|length }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="theme-panel text-center">
+                            <div class="fw-semibold">Open Drives</div>
+                            <div class="display-6">
+                                {{ approved_drives|length }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Approved drives list -->
+                    <div class="col-md-7">
+                        <div class="card theme-card">
+                            <div class="card-header bg-transparent border-0">
+                                <span class="fw-semibold">Available Drives</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <a class ="theme-link"> 
+                                                Drive
+                                            </a>
+                                                <th>Company</th>
+                                                <th>Deadline</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for d in approved_drives %}
+                                            <tr>
+                                                <td>{{ d.drive_title }}</td>
+                                                <td>{{ d.company.company_name }}</td>
+                                                <td>{{ d.application_deadline }}</td>
+                                                <td class="text-end">
+                                                    {% if d.id in applied_drive_ids %}
+                                                        <span class="theme-badge">Applied</span>
+                                                    {% else %}
+                                                        <form method="post"
+                                                              action="{{ url_for('apply_drive',
+                                                                                 drive_id=d.id) }}"
+                                                              class="d-inline">
+                                                            <input type="hidden" name="student_note"
+                                                                   value="Interested in {{ d.job_role }}">
+                                                            <button type="submit"
+                                                                    class="btn btn-primary btn-sm">
+                                                                Apply
+                                                            </button>
+                                                        </form>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted">
+                                                    No approved drives available right now.
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent applications -->
+                    <div class="col-md-5">
+                        <div class="card theme-card">
+                            <div class="card-header bg-transparent border-0">
+                                <span class="fw-semibold">Recent Applications</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Drive</th>
+                                                <th>Status</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for a in recent_applications %}
+                                            <tr>
+                                                <td>{{ a.drive.drive_title }}</td>
+                                                <td>{{ a.current_status }}</td>
+                                                <td>{{ a.applied_on.date() }}</td>
+                                            </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted">
+                                                    You have not applied to any drives yet.
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</div>
+
+<footer class="theme-footer text-center py-2">
+    <small>&copy; {{ 2026 }} Placement Portal.</small>
+</footer>
+
+</body>
+</html>

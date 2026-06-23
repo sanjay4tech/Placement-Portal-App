@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Manage Drives - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="theme-body">
+
+<nav class="navbar navbar-expand-lg theme-header navbar-dark mb-0">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+            Placement Portal
+        </a>
+        <div class="d-flex align-items-center">
+            <span class="me-3 small text-light">Admin Panel</span>
+            <a class="btn btn-outline-light btn-sm"
+               href="{{ url_for('sign_out') }}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-wrapper">
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <!-- Sidebar -->
+            <aside class="col-auto col-md-2 theme-sidebar p-3">
+                <h6 class="text-white mb-3">Navigation</h6>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('admin_home') }}">Dashboard</a>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('manage_companies') }}">Companies</a>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('manage_students') }}">Students</a>
+                <a class="theme-sidebar-link active"
+                   href="{{ url_for('manage_drives') }}">Drives</a>
+                <a class="theme-sidebar-link"
+                   href="{{ url_for('view_applications') }}">Applications</a>
+            </aside>
+
+            <!-- Main content -->
+            <main class="col py-4 px-4">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} mb-3">
+                        {{ message }}
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <h3 class="mb-3">Placement Drives</h3>
+
+                <div class="card theme-card">
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Drive Title</th>
+                                    <th>Company</th>
+                                    <th>Role</th>
+                                    <th>Deadline</th>
+                                    <th>Status</th>
+                                    <th style="width: 340px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for d, c in drives %}
+                                <tr>
+                                    <td>{{ d.drive_title }}</td>
+                                    <td>{{ c.company_name }}</td>
+                                    <td>{{ d.job_role }}</td>
+                                    <td>{{ d.application_deadline }}</td>
+                                    <td>
+                                        <span class="theme-badge">
+                                            {{ d.drive_status|capitalize }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-nowrap gap-2 align-items-center">
+
+                                            <!-- Approve -->
+                                            <form method="post"
+                                                  action="{{ url_for('update_drive_state', drive_id=d.id) }}"
+                                                  class="m-0">
+                                                <input type="hidden" name="drive_status" value="approved">
+                                                <button class="btn btn-success btn-sm action-btn-nowrap" type="submit">
+                                                    Approve
+                                                </button>
+                                            </form>
+
+                                            <!-- Mark Pending -->
+                                            <form method="post"
+                                                  action="{{ url_for('update_drive_state', drive_id=d.id) }}"
+                                                  class="m-0">
+                                                <input type="hidden" name="drive_status" value="pending">
+                                                <button class="btn btn-warning btn-sm action-btn-nowrap" type="submit">
+                                                    Mark Pending
+                                                </button>
+                                            </form>
+
+                                            <!-- Close -->
+                                            <form method="post"
+                                                  action="{{ url_for('update_drive_state', drive_id=d.id) }}"
+                                                  class="m-0">
+                                                <input type="hidden" name="drive_status" value="closed">
+                                                <button class="btn btn-danger btn-sm action-btn-nowrap" type="submit">
+                                                    Close
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">
+                                        No drives found.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</div>
+
+<footer class="theme-footer text-center py-2">
+    <small>&copy; {{ 2026 }} Placement Portal.</small>
+</footer>
+
+</body>
+</html>
